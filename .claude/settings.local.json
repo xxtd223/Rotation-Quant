@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(awk '{print $9, $5}')",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(pkill -f \"vite\")",
+      "Bash(cp -r \"C:/Users/86159/PycharmProjects/rotation-demo\" \"C:/Users/86159/PycharmProjects/rotationTest/rotation-demo\")",
+      "Bash(taskkill //F //IM node.exe)",
+      "Bash(rm -rf node_modules/.vite)"
+    ]
+  }
+}

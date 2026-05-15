@@ -2,3 +2,5 @@ weights/
 weight_cache/
 activation_output/
 results*/
+rotation-demo/node_modules/
+rotation-demo/dist/

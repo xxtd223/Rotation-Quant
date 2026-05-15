@@ -1,0 +1,166 @@
+:root {
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-card: #1c2333;
+  --bg-card-hover: #212d40;
+  --accent-cyan: #00e5ff;
+  --accent-blue: #4fc3f7;
+  --accent-green: #69db7c;
+  --accent-orange: #FFC000;
+  --accent-red: #C00000;
+  --accent-purple: #c084fc;
+  --text-primary: #e0e0e0;
+  --text-muted: #8b949e;
+  --text-dim: #4a5568;
+  --border-color: #30363d;
+  --border-glow: 0 0 8px rgba(0, 229, 255, 0.35);
+  --border-glow-strong: 0 0 16px rgba(0, 229, 255, 0.6);
+  --radius: 8px;
+  --radius-lg: 12px;
+}
+
+/* ── Glow utilities ── */
+.glow-cyan { box-shadow: var(--border-glow); }
+.glow-text { text-shadow: 0 0 10px rgba(0, 229, 255, 0.6); }
+.glow-text-strong { text-shadow: 0 0 20px rgba(0, 229, 255, 0.9); }
+
+/* ── Panel card ── */
+.panel-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 16px;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+.panel-card:hover {
+  border-color: var(--accent-cyan);
+  box-shadow: var(--border-glow);
+}
+
+/* ── Form controls ── */
+.ctrl-select {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  padding: 6px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.ctrl-select:focus, .ctrl-select:hover {
+  border-color: var(--accent-cyan);
+}
+
+.ctrl-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  display: block;
+}
+
+/* ── Buttons ── */
+.btn {
+  padding: 7px 18px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn:hover {
+  border-color: var(--accent-cyan);
+  box-shadow: var(--border-glow);
+  color: var(--accent-cyan);
+}
+.btn-primary {
+  background: rgba(0, 229, 255, 0.12);
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+.btn-primary:hover {
+  background: rgba(0, 229, 255, 0.22);
+  box-shadow: var(--border-glow-strong);
+}
+
+/* ── Section title ── */
+.section-title {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-cyan);
+  margin-bottom: 4px;
+}
+.panel-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 8px;
+}
+.baseline-badge {
+  display: inline-block;
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(255, 107, 107, 0.15);
+  border: 1px solid rgba(255, 107, 107, 0.4);
+  color: #ff6b6b;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* ── Animated progress bar ── */
+.progress-track {
+  background: var(--bg-secondary);
+  border-radius: 4px;
+  height: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  width: 0%;
+  transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));
+}
+.progress-fill.orange {
+  background: linear-gradient(90deg, var(--accent-orange), #ff9800);
+}
+.progress-fill.green {
+  background: linear-gradient(90deg, var(--accent-green), #40c057);
+}
+
+/* ── Pulsing glow animation ── */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 6px rgba(0, 229, 255, 0.3); }
+  50% { box-shadow: 0 0 18px rgba(0, 229, 255, 0.7); }
+}
+@keyframes pulse-text {
+  0%, 100% { text-shadow: 0 0 8px rgba(0, 229, 255, 0.4); }
+  50% { text-shadow: 0 0 20px rgba(0, 229, 255, 0.9); }
+}
+@keyframes scan-line {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+.pulse-glow { animation: pulse-glow 2.5s ease-in-out infinite; }
+.pulse-text { animation: pulse-text 2.5s ease-in-out infinite; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-cyan); }
+
+/* ── Divider ── */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 16px 0;
+}
