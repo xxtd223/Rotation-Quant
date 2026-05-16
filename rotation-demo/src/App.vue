@@ -23,6 +23,13 @@ const activeTab = ref('dist')
 </template>
 
 <style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: 'Segoe UI', 'PingFang SC', 'Helvetica Neue', system-ui, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
 .app-shell {
   min-height: 100vh;
   background: var(--bg-primary);

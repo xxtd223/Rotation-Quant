@@ -24,21 +24,21 @@ const inferenceCards = [
     format: 'FP16',
     method: 'No Quantization',
     quality: 'reference',
-    text: 'The transformer architecture relies on self-attention mechanisms to capture long-range dependencies. Each token attends to all other tokens in the sequence, enabling the model to understand complex contextual relationships with high fidelity.',
+    text: 'Serves as the golden reference standard by preserving the original high-fidelity weight and activation tensor distributions. While guaranteeing zero quantization noise and pristine model capabilities, it inflicts prohibitive memory footprints and system-level latency overheads under memory-bound scenarios.',
   },
   {
     label: 'MXFP4 — No Rotation',
-    format: 'MXFP4',
+    format: 'MXFP4/NVFP4',
     method: 'None',
     quality: 'degraded',
-    text: 'The transformer architecture relies on self-attention mechanisms to capture long-range dependencies. Each token attends to all other tokens in the sequence, enabling the model to understand complex contextual relationships with high fidelity.',
+    text: 'Directly compresses tensors into the microscopic floating-point format without coordinate transformation. Due to the constraints of block-shared scaling factors in MXFP4/NVFP4, severe dynamic range disparities induced by activation outliers trigger catastrophic truncation errors and cross-group noise propagation, leading to representation degradation.',
   },
   {
     label: 'MXFP4 + LQH Rotation',
-    format: 'MXFP4',
+    format: 'MXFP4/NVFP4',
     method: '+ LQH',
     quality: 'good',
-    text: 'The transformer architecture relies on self-attention mechanisms to capture long-range dependencies. Each token attends to all other tokens in the sequence, enabling the model to understand complex contextual relationships with high fidelity.',
+    text: 'Integrates our data-adaptive bilateral joint optimization framework. By synergizing covariance eigenvalue decomposition with the Hadamard transform, it enforces optimal dual-sided statistical alignment across both weights and activations, uniformly dispersing outlier energy to fully recover downstream model performance with zero runtime matrix overhead.',
   },
 ]
 
@@ -70,8 +70,8 @@ const pplData = {
       <SpeedupChart ref="speedupChart" :model="activeModel" :visible="visible" />
       <div class="vram-section">
         <div class="vram-toggle">
-          <button class="toggle-btn" :class="{ active: vramType === 'static' }" @click="vramType = 'static'">Static</button>
           <button class="toggle-btn" :class="{ active: vramType === 'peak' }" @click="vramType = 'peak'">Peak</button>
+          <button class="toggle-btn" :class="{ active: vramType === 'static' }" @click="vramType = 'static'">Static</button>
         </div>
         <VramChart ref="vramChart" :model="activeModel" :vramType="vramType" :visible="visible" />
       </div>
@@ -93,8 +93,8 @@ const pplData = {
           <div class="ppl-delta">+{{ (pplData[activeModel].mxfp4_none - pplData[activeModel].fp16).toFixed(2) }}</div>
         </div>
         <div class="ppl-arrow">vs</div>
-        <div class="ppl-card">
-          <div class="ppl-label">MXFP4 + LQH</div>
+        <div class="ppl-card lqh-card">
+          <div class="ppl-label">MXFP4 + LQH <span class="ours-badge">Ours</span></div>
           <div class="ppl-value good">{{ pplData[activeModel].mxfp4_lqh }}</div>
           <div class="ppl-delta good">+{{ (pplData[activeModel].mxfp4_lqh - pplData[activeModel].fp16).toFixed(2) }}</div>
         </div>
@@ -105,8 +105,8 @@ const pplData = {
           <div class="ppl-delta">+{{ (pplData[activeModel].nvfp4_none - pplData[activeModel].fp16).toFixed(2) }}</div>
         </div>
         <div class="ppl-arrow">vs</div>
-        <div class="ppl-card">
-          <div class="ppl-label">NVFP4 + LQH</div>
+        <div class="ppl-card lqh-card">
+          <div class="ppl-label">NVFP4 + LQH <span class="ours-badge">Ours</span></div>
           <div class="ppl-value good">{{ pplData[activeModel].nvfp4_sqh }}</div>
           <div class="ppl-delta good">+{{ (pplData[activeModel].nvfp4_sqh - pplData[activeModel].fp16).toFixed(2) }}</div>
         </div>
@@ -130,7 +130,7 @@ const pplData = {
 <style scoped>
 .metrics-view { padding: 24px; display: flex; flex-direction: column; gap: 20px; overflow: hidden; }
 .view-header { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
-.view-desc { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+.view-desc { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
 
 .model-toggle, .vram-toggle {
   display: flex;
@@ -146,13 +146,13 @@ const pplData = {
   border: none;
   background: none;
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 13px;
   cursor: pointer;
   transition: all 0.2s;
 }
 .toggle-btn.active {
-  background: rgba(0, 229, 255, 0.15);
-  color: var(--accent-cyan);
+  background: rgba(74, 124, 89, 0.12);
+  color: var(--primary);
 }
 
 .charts-row {
@@ -178,15 +178,19 @@ const pplData = {
   text-align: center;
   min-width: 120px;
 }
-.ppl-label { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
-.ppl-value { font-size: 28px; font-weight: 700; font-family: monospace; }
-.ppl-value.ref { color: var(--accent-cyan); }
-.ppl-value.bad { color: #ff6b6b; }
-.ppl-value.good { color: var(--accent-green); }
-.ppl-delta { font-size: 12px; margin-top: 4px; color: #ff6b6b; }
-.ppl-delta.good { color: var(--accent-green); }
+.ppl-label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+.ppl-value { font-size: 30px; font-weight: 700; font-family: monospace; }
+.ppl-value.ref { color: var(--primary); }
+.ppl-value.bad { color: var(--terracotta); }
+.ppl-value.good { color: var(--primary); }
+.ppl-delta { font-size: 13px; margin-top: 4px; color: var(--terracotta); }
+.ppl-delta.good { color: var(--primary); }
 .ppl-arrow { font-size: 20px; color: var(--text-muted); }
 .ppl-group-sep { font-size: 24px; color: var(--border-color); padding: 0 4px; }
+.lqh-card {
+  border-left: 3px solid var(--accent) !important;
+  background: rgba(212, 168, 83, 0.05) !important;
+}
 
 .inference-section { }
 .inference-grid {
@@ -196,7 +200,7 @@ const pplData = {
 }
 .inference-note {
   margin-top: 10px;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-dim);
   font-style: italic;
 }

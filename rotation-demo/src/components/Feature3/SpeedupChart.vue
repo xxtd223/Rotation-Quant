@@ -11,7 +11,7 @@ let plotted = false
 
 const FORMATS = ['MXFP4', 'NVFP4']
 const METHODS = ['None', '+ Hadamard', '+ LQH']
-const COLORS  = ['#4F9DA3', '#FFC000', '#C00000']
+const COLORS  = ['#4A7C59', '#D4A853', '#C17C5F']
 
 const DATA = {
   'Llama-3.2-3B': [[6.77, 6.00, 5.89], [6.27, 5.67, 5.58]],
@@ -25,7 +25,10 @@ function buildTraces() {
     name: method,
     x: FORMATS,
     y: FORMATS.map((_, k) => modelData[k][j]),
-    marker: { color: COLORS[j], line: { color: '#000', width: 1 } },
+    marker: {
+      color: COLORS[j],
+      line: { color: '#333', width: 1 },
+    },
     width: 0.2,
     offset: (j - 1) * 0.22,
   }))
@@ -34,27 +37,26 @@ function buildTraces() {
 
 const layout = {
   paper_bgcolor: 'transparent',
-  plot_bgcolor: 'rgba(13,17,23,0.6)',
-  font: { color: '#e0e0e0', size: 11 },
+  plot_bgcolor: 'rgba(245,242,237,0.5)',
+  font: { color: '#2c2c2c', size: 12 },
   margin: { t: 10, b: 50, l: 50, r: 10 },
-  xaxis: { title: 'Format', gridcolor: '#1e2a3a', tickfont: { size: 12 } },
-  yaxis: { title: 'Speedup vs FP16', gridcolor: '#1e2a3a', range: [0, 8] },
+  xaxis: { title: 'Format', gridcolor: '#e0d9cf', tickfont: { size: 12 } },
+  yaxis: { title: 'Speedup vs FP16', gridcolor: '#e0d9cf', range: [0, 8] },
   legend: { orientation: 'h', y: -0.2, font: { size: 11 } },
   barmode: 'overlay',
   shapes: [{
     type: 'line',
     xref: 'paper', x0: 0, x1: 1,
     yref: 'y',     y0: 1, y1: 1,
-    line: { color: '#e0e0e0', dash: 'dash', width: 1.5 },
+    line: { color: '#6b6b6b', dash: 'dash', width: 1.2 },
   }],
 }
 
-// Dummy invisible scatter just to put "FP16 Baseline" in the legend
 const LEGEND_TRACE = {
   type: 'scatter',
   x: [null], y: [null],
   mode: 'lines',
-  line: { color: '#e0e0e0', dash: 'dash', width: 1.5 },
+  line: { color: '#6b6b6b', dash: 'dash', width: 1.2 },
   name: 'FP16 Baseline',
   showlegend: true,
 }

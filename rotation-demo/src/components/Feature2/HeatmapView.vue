@@ -57,7 +57,7 @@ const rightLabel = () => METHOD_OPTIONS.find(m => m.value === methodRight.value)
         <p class="view-desc">
           NVFP4 absolute output error |Ŷ − Y| &nbsp;|&nbsp;
           D={{ D }}, N={{ N }}, M={{ M }}, gs={{ gs }} &nbsp;|&nbsp;
-          W ~ Llama_WQ · Shared color scale
+          W ~ Llama_WQ
         </p>
       </div>
     </div>
@@ -114,15 +114,15 @@ const rightLabel = () => METHOD_OPTIONS.find(m => m.value === methodRight.value)
 
     <div class="legend-row">
       <div class="legend-item">
-        <div class="legend-dot" style="background:#C00000"></div>
+        <div class="legend-dot" style="background:#8b4a3a"></div>
         <span>Large absolute error</span>
       </div>
       <div class="legend-item">
-        <div class="legend-dot" style="background:#FFC000"></div>
+        <div class="legend-dot" style="background:#d4a853"></div>
         <span>Medium absolute error</span>
       </div>
       <div class="legend-item">
-        <div class="legend-dot" style="background:#0d1117; border:1px solid #30363d"></div>
+        <div class="legend-dot" style="background:#e4f1e6; border:1px solid #b8d4ba"></div>
         <span>Near-zero error (ideal)</span>
       </div>
       <div class="legend-note">Block size = 16 (NVFP4)</div>
@@ -133,7 +133,7 @@ const rightLabel = () => METHOD_OPTIONS.find(m => m.value === methodRight.value)
 <style scoped>
 .heatmap-view { padding: 24px; display: flex; flex-direction: column; gap: 20px; }
 .view-header { display: flex; align-items: flex-start; }
-.view-desc { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+.view-desc { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
 
 .controls-row {
   display: flex;
@@ -173,7 +173,7 @@ const rightLabel = () => METHOD_OPTIONS.find(m => m.value === methodRight.value)
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius);
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-muted);
 }
 .legend-item { display: flex; align-items: center; gap: 6px; }

@@ -48,7 +48,7 @@ onMounted(regenerate)
     <div class="view-header">
       <div>
         <div class="section-title">Distribution Comparison</div>
-        <p class="view-desc">Activation value distribution before and after linear transformation</p>
+        <p class="view-desc">Activation value distribution before and after rotation transformation</p>
       </div>
     </div>
 
@@ -79,34 +79,36 @@ onMounted(regenerate)
         :values="baselineData"
         title="None"
         :isBaseline="true"
-        color="#8b949e"
+        color="#8BAA8B"
       />
       <DistributionPanel
         ref="panelMid"
         :values="midData"
         :title="midLabel"
-        color="#4fc3f7"
+        :isLQH="methodMid === 'LQH' || methodMid === 'LQ'"
+        color="#4A7C59"
       />
       <DistributionPanel
         ref="panelRight"
         :values="rightData"
         :title="rightLabel"
-        color="#69db7c"
+        :isLQH="methodRight === 'LQH' || methodRight === 'LQ'"
+        color="#6B8E9B"
       />
     </div>
 
     <div class="insight-row">
       <div class="insight-card">
-        <span class="insight-icon">💡</span>
-        <span>Hadamard spreads outlier energy across all block elements, eliminating spikes.</span>
+        <span class="insight-label">Hadamard</span>
+        <span>Spreads outlier energy across all block elements, eliminating activation spikes.</span>
       </div>
       <div class="insight-card">
-        <span class="insight-icon">📐</span>
-        <span>Whitening-based methods (White, WUS, WUSH) normalize variance to ~1, ideal for uniform quantization grids.</span>
+        <span class="insight-label">Whitening</span>
+        <span>Decorrelates features and standardizes variance, maximizing single-sided quantization grid efficiency for unilateral tensor distributions.</span>
       </div>
-      <div class="insight-card">
-        <span class="insight-icon">🎯</span>
-        <span>LQH combines symmetric joint optimization with Hadamard for best quantization alignment.</span>
+      <div class="insight-card lqh-highlight" style="border-radius:var(--radius)">
+        <span class="insight-label">LQH <span class="ours-badge" style="font-size:10px">Ours</span></span>
+        <span>Introduces bilateral joint optimization across both activation and weight distributions, combining covariance eigenvalue decomposition with Hadamard transform for optimal dual-sided alignment.</span>
       </div>
     </div>
   </div>
@@ -115,7 +117,7 @@ onMounted(regenerate)
 <style scoped>
 .dist-view { padding: 24px; display: flex; flex-direction: column; gap: 20px; }
 .view-header { display: flex; align-items: flex-start; justify-content: space-between; }
-.view-desc { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+.view-desc { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
 .controls-row {
   display: flex;
   align-items: flex-end;
@@ -139,15 +141,21 @@ onMounted(regenerate)
 }
 .insight-card {
   display: flex;
-  gap: 8px;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: 4px;
   padding: 12px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius);
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-muted);
-  line-height: 1.5;
+  line-height: 1.6;
 }
-.insight-icon { font-size: 16px; flex-shrink: 0; }
+.insight-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
 </style>

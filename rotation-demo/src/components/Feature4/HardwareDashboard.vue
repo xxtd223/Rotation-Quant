@@ -8,10 +8,10 @@ const props = defineProps({ visible: Boolean })
 
 const gauge = ref(null)
 
-const { value: compressionRatio, start: startCR } = useAnimatedCounter(3.7, 1)
+const { value: blockSize,        start: startBS } = useAnimatedCounter(16,   0)
+const { value: compressionRatio, start: startCR } = useAnimatedCounter(3.76, 2)
 const { value: peakSpeedup,      start: startPS } = useAnimatedCounter(6.77, 2)
-const { value: blockSize,        start: startBS } = useAnimatedCounter(16, 0)
-const { value: precision,        start: startPR } = useAnimatedCounter(94, 0)
+const { value: precision,        start: startPR } = useAnimatedCounter(98, 0)
 
 function startAll() {
   startCR(); startPS(); startBS(); startPR()
@@ -27,24 +27,42 @@ watch(() => props.visible, (v) => {
 })
 
 const progressBars = [
-  { label: 'Memory Compression', percent: 73, colorClass: '', detail: 'FP16 (100%) → FP4 (27%) — 3.7× reduction' },
-  { label: 'Compute Speedup',    percent: 85, colorClass: 'orange', detail: 'Up to 6.77× vs FP16 on MXFP4 (Llama-3.2-3B)' },
-  { label: 'Precision Retention',percent: 94, colorClass: 'green',  detail: 'Perplexity degradation < 0.4 with LQH rotation' },
+  {
+    label: 'Memory Compression',
+    pctMin: 71.50, pctMax: 73.44,
+    colorClass: '',
+    labelMin: '71.5%', labelMax: '73.4%',
+    detail: 'FP4 footprint: 26.56% – 28.50% of FP16 baseline',
+  },
+  {
+    label: 'Compute Speedup',
+    pctMin: 69.75, pctMax: 84.63,
+    colorClass: 'orange',
+    labelMin: '5.58×', labelMax: '6.77×',
+    detail: 'vs FP16 across all FP4 configs (normalized to 8× scale)',
+  },
+  {
+    label: 'Precision Retention',
+    pctMin: 95.01, pctMax: 98.55,
+    colorClass: 'green',
+    labelMin: '95.01%', labelMax: '98.55%',
+    detail: 'PPL recovery with LQH rotation on WikiText-2',
+  },
 ]
 
 const stats = [
-  { label: 'Compression Ratio', value: compressionRatio, suffix: '×', icon: '🗜️' },
-  { label: 'Peak Speedup',      value: peakSpeedup,      suffix: '×', icon: '⚡' },
-  { label: 'FP4 Block Size',    value: blockSize,        suffix: '',  icon: '📦' },
-  { label: 'Precision Retained',value: precision,        suffix: '%', icon: '🎯' },
+  { label: 'NVFP4 Block Size',    value: blockSize,        suffix: ''  },
+  { label: 'Compression Ratio',   value: compressionRatio, suffix: '×' },
+  { label: 'Peak Speedup',        value: peakSpeedup,      suffix: '×' },
+  { label: 'Best Recovery',       value: precision,        suffix: '%' },
 ]
 
 // Bit-width comparison data
 const bitComparison = [
-  { format: 'FP16',  bits: 16,  color: '#ff6b6b', pct: 100 },
-  { format: 'BF16',  bits: 16,  color: '#FFC000', pct: 100 },
-  { format: 'FP4',   bits: 4,   color: '#00e5ff', pct: 25 },
-  { format: 'NVFP4', bits: 4.5, color: '#69db7c', pct: 28.125 },
+  { format: 'FP16',  bits: 16,  color: '#C17C5F', pct: 100 },
+  { format: 'BF16',  bits: 16,  color: '#D4A853', pct: 100 },
+  { format: 'FP4',   bits: 4,   color: '#4A7C59', pct: 25 },
+  { format: 'NVFP4', bits: 4.5, color: '#6B8E9B', pct: 28.125 },
 ]
 </script>
 
@@ -57,9 +75,8 @@ const bitComparison = [
 
     <!-- Stat counters row -->
     <div class="stats-grid">
-      <div v-for="stat in stats" :key="stat.label" class="stat-card panel-card pulse-glow">
-        <div class="stat-icon">{{ stat.icon }}</div>
-        <div class="stat-value glow-text">{{ stat.value }}{{ stat.suffix }}</div>
+      <div v-for="stat in stats" :key="stat.label" class="stat-card panel-card">
+        <div class="stat-value">{{ stat.value }}{{ stat.suffix }}</div>
         <div class="stat-label">{{ stat.label }}</div>
       </div>
     </div>
@@ -67,11 +84,11 @@ const bitComparison = [
     <!-- Main content: gauge + progress bars -->
     <div class="main-row">
       <div class="gauge-section panel-card">
-        <GaugeChart ref="gauge" :value="27" :visible="visible" />
+        <GaugeChart ref="gauge" :valueMin="26.56" :valueMax="28.50" :visible="visible" />
         <div class="gauge-annotation">
           <span class="ann-fp16">FP16 = 100%</span>
           <span class="ann-arrow">→</span>
-          <span class="ann-fp4">FP4 ≈ 27%</span>
+          <span class="ann-fp4">FP4: 26.6% – 28.5%</span>
         </div>
       </div>
 
@@ -114,7 +131,7 @@ const bitComparison = [
         <div class="fc-spec">1S · 2E · 1M + 8E shared scale</div>
         <div class="fc-spec">Block size: 32 elements</div>
         <div class="fc-spec">Values: {0, ±0.5, ±1, ±1.5, ±2, ±3, ±4, ±6}</div>
-        <div class="fc-metric">Speedup: up to <strong>6.77×</strong></div>
+        <div class="fc-metric">Speedup: up to <strong>6.66×</strong></div>
       </div>
       <div class="format-card panel-card">
         <div class="fc-header">
@@ -124,17 +141,18 @@ const bitComparison = [
         <div class="fc-spec">1S · 2E · 1M + E4M3 shared scale</div>
         <div class="fc-spec">Block size: 16 elements</div>
         <div class="fc-spec">Scale: E4M3 precision (3-bit mantissa)</div>
-        <div class="fc-metric">Speedup: up to <strong>6.27×</strong></div>
+        <div class="fc-metric">Speedup: up to <strong>6.24×</strong></div>
       </div>
-      <div class="format-card panel-card">
+      <div class="format-card panel-card lqh-highlight">
         <div class="fc-header">
           <span class="fc-badge lqh">LQH Rotation</span>
           <span class="fc-sub">Linear Quantization Helper</span>
+          <span class="ours-badge" style="margin-left:auto">Ours</span>
         </div>
-        <div class="fc-spec">LQH: Symmetric + Hadamard</div>
-        <div class="fc-spec">Spreads outliers across blocks</div>
+        <div class="fc-spec">LQH: Optimal rotation + Hadamard</div>
+        <div class="fc-spec">Smooth outliers</div>
         <div class="fc-spec">Equalizes W and X variance</div>
-        <div class="fc-metric">PPL improvement: <strong>~0.9</strong></div>
+        <div class="fc-metric">PPL improvement: <strong>~0.88</strong></div>
       </div>
     </div>
   </div>
@@ -142,7 +160,7 @@ const bitComparison = [
 
 <style scoped>
 .hw-dashboard { padding: 24px; display: flex; flex-direction: column; gap: 20px; }
-.view-desc { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+.view-desc { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
 
 .stats-grid {
   display: grid;
@@ -157,15 +175,14 @@ const bitComparison = [
   padding: 20px 12px;
   text-align: center;
 }
-.stat-icon { font-size: 24px; }
 .stat-value {
-  font-size: 32px;
+  font-size: 30px;
   font-weight: 700;
   font-family: monospace;
-  color: var(--accent-cyan);
+  color: var(--primary);
   line-height: 1;
 }
-.stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+.stat-label { font-size: 12px; color: var(--text-muted); letter-spacing: 0.04em; }
 
 .main-row {
   display: grid;
@@ -180,9 +197,9 @@ const bitComparison = [
   font-size: 13px;
   margin-top: 4px;
 }
-.ann-fp16 { color: #ff6b6b; font-weight: 600; }
+.ann-fp16 { color: var(--terracotta); font-weight: 600; }
 .ann-arrow { color: var(--text-muted); }
-.ann-fp4 { color: var(--accent-cyan); font-weight: 600; }
+.ann-fp4 { color: var(--primary); font-weight: 600; }
 
 .progress-section { }
 .progress-list { display: flex; flex-direction: column; gap: 20px; }
@@ -190,7 +207,7 @@ const bitComparison = [
 .bitwidth-section { }
 .bitwidth-grid { display: flex; flex-direction: column; gap: 10px; }
 .bitwidth-item { display: grid; grid-template-columns: 60px 1fr 60px; align-items: center; gap: 12px; }
-.bw-label { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+.bw-label { font-size: 13px; color: var(--text-muted); font-weight: 600; }
 .bw-bar-track {
   height: 10px;
   background: var(--bg-secondary);
@@ -204,7 +221,7 @@ const bitComparison = [
   transition: width 1.2s ease-out;
   opacity: 0.85;
 }
-.bw-bits { font-size: 11px; font-weight: 700; font-family: monospace; text-align: right; }
+.bw-bits { font-size: 12px; font-weight: 700; font-family: monospace; text-align: right; }
 
 .format-cards {
   display: grid;
@@ -214,16 +231,16 @@ const bitComparison = [
 .format-card { display: flex; flex-direction: column; gap: 8px; }
 .fc-header { display: flex; align-items: center; gap: 8px; }
 .fc-badge {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   padding: 3px 8px;
   border-radius: 4px;
   letter-spacing: 0.04em;
 }
-.fc-badge.mxfp4 { background: rgba(79,195,247,0.15); color: #4fc3f7; border: 1px solid rgba(79,195,247,0.3); }
-.fc-badge.nvfp4  { background: rgba(105,219,124,0.15); color: #69db7c; border: 1px solid rgba(105,219,124,0.3); }
-.fc-badge.lqh    { background: rgba(0,229,255,0.12); color: #00e5ff; border: 1px solid rgba(0,229,255,0.3); }
-.fc-sub { font-size: 11px; color: var(--text-muted); }
-.fc-spec { font-size: 12px; color: var(--text-muted); padding-left: 4px; }
-.fc-metric { font-size: 13px; color: var(--text-primary); margin-top: 4px; padding-top: 8px; border-top: 1px solid var(--border-color); }
+.fc-badge.mxfp4 { background: rgba(107,142,155,0.12); color: var(--mist-blue);   border: 1px solid rgba(107,142,155,0.3); }
+.fc-badge.nvfp4  { background: rgba(74,124,89,0.1);   color: var(--primary);     border: 1px solid rgba(74,124,89,0.28); }
+.fc-badge.lqh    { background: rgba(212,168,83,0.12); color: var(--accent);      border: 1px solid rgba(212,168,83,0.3); }
+.fc-sub { font-size: 12px; color: var(--text-muted); }
+.fc-spec { font-size: 13px; color: var(--text-muted); padding-left: 4px; }
+.fc-metric { font-size: 14px; color: var(--text-primary); margin-top: 4px; padding-top: 8px; border-top: 1px solid var(--border-color); }
 </style>

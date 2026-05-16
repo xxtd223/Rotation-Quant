@@ -2,7 +2,8 @@
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 
 const props = defineProps({
-  value: { type: Number, default: 27 },
+  valueMin: { type: Number, default: 26.56 },
+  valueMax: { type: Number, default: 28.50 },
   visible: Boolean,
 })
 
@@ -14,37 +15,40 @@ function render() {
 
   const traces = [{
     type: 'indicator',
-    mode: 'gauge+number+delta',
-    value: props.value,
-    delta: { reference: 100, valueformat: '.0f', suffix: '%', increasing: { color: '#ff6b6b' }, decreasing: { color: '#69db7c' } },
-    number: { suffix: '%', font: { size: 36, color: '#00e5ff' } },
+    mode: 'gauge+number',
+    value: props.valueMin,
+    number: { suffix: '%', font: { size: 34, color: '#4A7C59' } },
     gauge: {
       axis: {
         range: [0, 100],
         tickwidth: 1,
-        tickcolor: '#30363d',
-        tickfont: { color: '#8b949e', size: 10 },
+        tickcolor: '#e0d9cf',
+        tickfont: { color: '#6b6b6b', size: 10 },
         nticks: 6,
       },
-      bar: { color: '#00e5ff', thickness: 0.25 },
+      bar: { color: '#4A7C59', thickness: 0.22 },
       bgcolor: 'transparent',
       borderwidth: 0,
       steps: [
-        { range: [0, props.value], color: 'rgba(0,229,255,0.08)' },
-        { range: [props.value, 100], color: 'rgba(255,107,107,0.06)' },
+        { range: [0, props.valueMin],  color: 'rgba(74,124,89,0.08)' },
+        { range: [props.valueMin, props.valueMax], color: 'rgba(74,124,89,0.22)' },
+        { range: [props.valueMax, 100], color: 'rgba(193,124,95,0.06)' },
       ],
       threshold: {
-        line: { color: '#ff6b6b', width: 2 },
+        line: { color: '#C17C5F', width: 1.5 },
         thickness: 0.75,
         value: 100,
       },
     },
-    title: { text: 'Memory Footprint<br><span style="font-size:12px;color:#8b949e">FP16 → FP4 Compression</span>', font: { color: '#e0e0e0', size: 14 } },
+    title: {
+      text: `Memory Footprint<br><span style="font-size:12px;color:#6b6b6b">Range: ${props.valueMin}% – ${props.valueMax}%</span>`,
+      font: { color: '#2c2c2c', size: 14 },
+    },
   }]
 
   const layout = {
     paper_bgcolor: 'transparent',
-    font: { color: '#e0e0e0' },
+    font: { color: '#2c2c2c' },
     margin: { t: 60, b: 20, l: 20, r: 20 },
     height: 260,
   }

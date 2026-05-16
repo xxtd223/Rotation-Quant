@@ -1,28 +1,30 @@
 :root {
-  --bg-primary: #0d1117;
-  --bg-secondary: #161b22;
-  --bg-card: #1c2333;
-  --bg-card-hover: #212d40;
-  --accent-cyan: #00e5ff;
-  --accent-blue: #4fc3f7;
-  --accent-green: #69db7c;
-  --accent-orange: #FFC000;
-  --accent-red: #C00000;
-  --accent-purple: #c084fc;
-  --text-primary: #e0e0e0;
-  --text-muted: #8b949e;
-  --text-dim: #4a5568;
-  --border-color: #30363d;
-  --border-glow: 0 0 8px rgba(0, 229, 255, 0.35);
-  --border-glow-strong: 0 0 16px rgba(0, 229, 255, 0.6);
-  --radius: 8px;
-  --radius-lg: 12px;
-}
+  /* ── 学术经典 · Academic Classic ── */
 
-/* ── Glow utilities ── */
-.glow-cyan { box-shadow: var(--border-glow); }
-.glow-text { text-shadow: 0 0 10px rgba(0, 229, 255, 0.6); }
-.glow-text-strong { text-shadow: 0 0 20px rgba(0, 229, 255, 0.9); }
+  /* Backgrounds */
+  --bg-primary:    #f5f2ed;   /* page */
+  --bg-secondary:  #ede9e2;   /* nav / controls strip */
+  --bg-card:       #fdfdfb;   /* card */
+  --bg-card-hover: #f8f5f0;
+
+  /* Academic palette */
+  --primary:       #4A7C59;   /* forest green — main accent */
+  --secondary:     #8BAA8B;   /* sage green */
+  --accent:        #D4A853;   /* marigold yellow */
+  --terracotta:    #C17C5F;   /* terracotta orange */
+  --mist-blue:     #6B8E9B;   /* mist blue */
+  --warm-beige:    #E8D5C4;   /* warm beige */
+
+  /* Text */
+  --text-primary:  #2c2c2c;
+  --text-muted:    #6b6b6b;
+  --text-dim:      #a8a09a;
+
+  /* Structure */
+  --border-color:  #e0d9cf;
+  --radius:    6px;
+  --radius-lg: 10px;
+}
 
 /* ── Panel card ── */
 .panel-card {
@@ -30,31 +32,47 @@
   border: 1px solid var(--border-color);
   border-radius: var(--radius);
   padding: 16px;
-  transition: border-color 0.25s, box-shadow 0.25s;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 }
-.panel-card:hover {
-  border-color: var(--accent-cyan);
-  box-shadow: var(--border-glow);
+
+/* ── LQH "our method" highlight ── */
+.lqh-highlight {
+  border-left: 3px solid var(--accent) !important;
+  background: rgba(212, 168, 83, 0.04) !important;
+}
+.ours-badge {
+  display: inline-block;
+  font-size: 11px;
+  padding: 1px 7px;
+  border-radius: 3px;
+  background: rgba(212, 168, 83, 0.18);
+  border: 1px solid rgba(212, 168, 83, 0.5);
+  color: #9a6e10;
+  margin-left: 7px;
+  vertical-align: middle;
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 /* ── Form controls ── */
 .ctrl-select {
-  background: var(--bg-secondary);
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  border-radius: 4px;
   color: var(--text-primary);
-  padding: 6px 10px;
-  font-size: 13px;
+  padding: 5px 10px;
+  font-size: 14px;
   cursor: pointer;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.15s;
 }
-.ctrl-select:focus, .ctrl-select:hover {
-  border-color: var(--accent-cyan);
+.ctrl-select:focus,
+.ctrl-select:hover {
+  border-color: var(--primary);
 }
 
 .ctrl-label {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-muted);
   margin-bottom: 4px;
   display: block;
@@ -62,54 +80,50 @@
 
 /* ── Buttons ── */
 .btn {
-  padding: 7px 18px;
-  border-radius: 6px;
+  padding: 6px 16px;
+  border-radius: 4px;
   border: 1px solid var(--border-color);
-  background: var(--bg-secondary);
+  background: var(--bg-card);
   color: var(--text-primary);
-  font-size: 13px;
+  font-size: 14px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: border-color 0.15s, background 0.15s;
 }
 .btn:hover {
-  border-color: var(--accent-cyan);
-  box-shadow: var(--border-glow);
-  color: var(--accent-cyan);
+  border-color: var(--primary);
+  background: var(--bg-card-hover);
 }
 .btn-primary {
-  background: rgba(0, 229, 255, 0.12);
-  border-color: var(--accent-cyan);
-  color: var(--accent-cyan);
+  background: rgba(74, 124, 89, 0.1);
+  border-color: var(--primary);
+  color: var(--primary);
 }
 .btn-primary:hover {
-  background: rgba(0, 229, 255, 0.22);
-  box-shadow: var(--border-glow-strong);
+  background: rgba(74, 124, 89, 0.18);
 }
 
-/* ── Section title ── */
+/* ── Section / panel titles ── */
 .section-title {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--accent-cyan);
+  color: var(--text-primary);
   margin-bottom: 4px;
 }
 .panel-title {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 500;
   color: var(--text-muted);
   text-align: center;
   margin-bottom: 8px;
 }
 .baseline-badge {
   display: inline-block;
-  font-size: 10px;
+  font-size: 11px;
   padding: 1px 6px;
-  border-radius: 4px;
-  background: rgba(255, 107, 107, 0.15);
-  border: 1px solid rgba(255, 107, 107, 0.4);
-  color: #ff6b6b;
+  border-radius: 3px;
+  background: rgba(107, 107, 107, 0.1);
+  border: 1px solid rgba(107, 107, 107, 0.25);
+  color: var(--text-muted);
   margin-left: 6px;
   vertical-align: middle;
 }
@@ -117,46 +131,26 @@
 /* ── Animated progress bar ── */
 .progress-track {
   background: var(--bg-secondary);
-  border-radius: 4px;
-  height: 8px;
+  border-radius: 3px;
+  height: 7px;
   overflow: hidden;
   border: 1px solid var(--border-color);
 }
 .progress-fill {
   height: 100%;
-  border-radius: 4px;
+  border-radius: 3px;
   width: 0%;
-  transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-  background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));
+  transition: width 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: var(--primary);
 }
-.progress-fill.orange {
-  background: linear-gradient(90deg, var(--accent-orange), #ff9800);
-}
-.progress-fill.green {
-  background: linear-gradient(90deg, var(--accent-green), #40c057);
-}
-
-/* ── Pulsing glow animation ── */
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 6px rgba(0, 229, 255, 0.3); }
-  50% { box-shadow: 0 0 18px rgba(0, 229, 255, 0.7); }
-}
-@keyframes pulse-text {
-  0%, 100% { text-shadow: 0 0 8px rgba(0, 229, 255, 0.4); }
-  50% { text-shadow: 0 0 20px rgba(0, 229, 255, 0.9); }
-}
-@keyframes scan-line {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100vh); }
-}
-.pulse-glow { animation: pulse-glow 2.5s ease-in-out infinite; }
-.pulse-text { animation: pulse-text 2.5s ease-in-out infinite; }
+.progress-fill.orange { background: var(--terracotta); }
+.progress-fill.green  { background: var(--secondary); }
 
 /* ── Scrollbar ── */
-::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: var(--bg-primary); }
 ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--accent-cyan); }
+::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
 
 /* ── Divider ── */
 .divider {

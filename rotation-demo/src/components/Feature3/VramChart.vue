@@ -12,14 +12,14 @@ let plotted = false
 
 const FORMATS = ['MXFP4', 'NVFP4']
 const METHODS = ['None', '+ Hadamard', '+ LQH']
-const COLORS  = ['#4F9DA3', '#FFC000', '#C00000']
+const COLORS  = ['#4A7C59', '#D4A853', '#C17C5F']
 
 const DATA = {
-  static: {
+  peak: {
     'Llama-3.2-3B': [[26.56, 27.30, 27.30], [28.12, 28.50, 28.50]],
     'Qwen3-8B':     [[26.56, 27.08, 27.08], [28.20, 28.46, 28.46]],
   },
-  peak: {
+  static: {
     'Llama-3.2-3B': [[26.56, 27.17, 27.17], [28.12, 28.43, 28.43]],
     'Qwen3-8B':     [[26.56, 27.04, 27.04], [28.12, 28.36, 28.36]],
   },
@@ -32,7 +32,10 @@ function buildTraces() {
     name: method,
     x: FORMATS,
     y: FORMATS.map((_, k) => modelData[k][j]),
-    marker: { color: COLORS[j], line: { color: '#000', width: 1 } },
+    marker: {
+      color: COLORS[j],
+      line: { color: '#333', width: 1 },
+    },
     width: 0.2,
     offset: (j - 1) * 0.22,
   }))
@@ -41,13 +44,13 @@ function buildTraces() {
 function buildLayout() {
   return {
     paper_bgcolor: 'transparent',
-    plot_bgcolor: 'rgba(13,17,23,0.6)',
-    font: { color: '#e0e0e0', size: 11 },
+    plot_bgcolor: 'rgba(245,242,237,0.5)',
+    font: { color: '#2c2c2c', size: 12 },
     margin: { t: 10, b: 50, l: 55, r: 10 },
-    xaxis: { title: 'Format', gridcolor: '#1e2a3a', tickfont: { size: 12 } },
+    xaxis: { title: 'Format', gridcolor: '#e0d9cf', tickfont: { size: 12 } },
     yaxis: {
       title: `${props.vramType === 'static' ? 'Static' : 'Peak'} VRAM Usage (%)`,
-      gridcolor: '#1e2a3a',
+      gridcolor: '#e0d9cf',
       range: [24, 30],
     },
     legend: { orientation: 'h', y: -0.2, font: { size: 11 } },
