@@ -21,7 +21,8 @@ function buildErrorMatrix() {
   if (!props.rawData) return null
   const { X, W, D, N, M, gs } = props.rawData
   const { X_prime, W_prime } = applyTransformFull(X, W, D, N, M, gs, props.method)
-  const { error, mae: maeVal } = nvfp4QuantError(W, D, M, X, N, X_prime, W_prime)
+  const scale = 1.0
+  const { error, mae: maeVal } = nvfp4QuantError(W, D, M, X, N, X_prime, W_prime, scale)
   mae.value = maeVal
   return flatTo2D(error, Math.min(M, 64), Math.min(N, 64))
 }

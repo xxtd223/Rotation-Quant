@@ -131,7 +131,7 @@ const bitComparison = [
           <span class="fc-badge lqh">LQH Rotation</span>
           <span class="fc-sub">Linear Quantization Helper</span>
         </div>
-        <div class="fc-spec">SQH: Symmetric + Hadamard</div>
+        <div class="fc-spec">LQH: Symmetric + Hadamard</div>
         <div class="fc-spec">Spreads outliers across blocks</div>
         <div class="fc-spec">Equalizes W and X variance</div>
         <div class="fc-metric">PPL improvement: <strong>~0.9</strong></div>

@@ -34,7 +34,7 @@ real_data_pairs = [
     ('Llama_WV', 'Llama_XV', 'V_Projection'),
     ('Llama_WO', 'Llama_XO', 'O_Projection'),
 ]
-transform_methods = ['None', 'hadamard', 'householder_random', 'White', 'SQ', 'SQH', 'WUS', 'WUSH']
+transform_methods = ['None', 'hadamard', 'householder_random', 'White', 'LQ', 'LQH', 'WUS', 'WUSH']
 
 # 保存路径
 #os.makedirs("results/plots", exist_ok=True)
@@ -97,7 +97,7 @@ for gs in group_sizes:
                             g_end = g_start + gs
                             X_group = X[g_start:g_end, :]
                             W_group = W[g_start:g_end, :]
-                            if method in ['WUSH', 'WUS', 'WUSH_withoutC', 'SQ', 'SQH']:
+                            if method in ['WUSH', 'WUS', 'WUSH_withoutC', 'LQ', 'LQH']:
                                 trans_X_g, T_g = transformer.transform(X_group, method=method, W=W_group)
                             else:
                                 trans_X_g, T_g = transformer.transform(X_group, method=method)
@@ -186,7 +186,7 @@ for gs in group_sizes:
                         g_end = g_start + gs
                         X_g, W_g = X[g_start:g_end, :], W[g_start:g_end, :]
 
-                        if method in ['WUSH', 'WUS', 'SQ', 'SQH']:
+                        if method in ['WUSH', 'WUS', 'LQ', 'LQH']:
                             tx_g, T_g = transformer.transform(X_g, method=method, W=W_g)
                         else:
                             tx_g, T_g = transformer.transform(X_g, method=method)
@@ -243,7 +243,7 @@ print("\n实验完成！")
 '''
 # 这是真实激活值的实验循环（探索极限版）
 print(f"开始真实数据实验，共 {len(real_data_pairs)} 个场景 * {len(transform_methods)} 种变换...")
-print(f"开始探索 SQH 优化极限，n={n}...")
+print(f"开始探索 LQH 优化极限，n={n}...")
 
 # 第一层：遍历分组大小
 for gs in group_sizes:
@@ -251,9 +251,9 @@ for gs in group_sizes:
 
     # 第二层：遍历真实数据配对 (Q/K/V/O)
     for w_key, x_key, scene_name in real_data_pairs:
-        print(f"  - 正在寻找 {scene_name} 的 SQH 极限场景...")
+        print(f"  - 正在寻找 {scene_name} 的 LQH 极限场景...")
 
-        # 记录该场景下“None - SQH”差距最大的一次快照
+        # 记录该场景下“None - LQH”差距最大的一次快照
         best_snapshot = {
             "max_diff": -1.0,
             "all_methods_mae": {},  # 存储那一次迭代中所有方法的 MAE
@@ -287,7 +287,7 @@ for gs in group_sizes:
                         g_end = g_start + gs
                         X_g, W_g = X[g_start:g_end, :], W[g_start:g_end, :]
 
-                        if method in ['WUSH', 'WUS', 'SQ', 'SQH']:
+                        if method in ['WUSH', 'WUS', 'LQ', 'LQH']:
                             tx_g, T_g = transformer.transform(X_g, method=method, W=W_g)
                         else:
                             tx_g, T_g = transformer.transform(X_g, method=method)
@@ -309,9 +309,9 @@ for gs in group_sizes:
                 current_iter_transformed_X[method] = t_X.copy()
                 current_iter_transformed_W[method] = t_W.copy()
 
-            # --- 核心判定：寻找 SQH 提升最明显的瞬间 ---
-            # 这里的 diff 代表 SQH 相比于不处理（None）降低了多少误差百分比
-            improvement = (current_iter_maes['None'] - current_iter_maes['SQH']) / current_iter_maes['None']
+            # --- 核心判定：寻找 LQH 提升最明显的瞬间 ---
+            # 这里的 diff 代表 LQH 相比于不处理（None）降低了多少误差百分比
+            improvement = (current_iter_maes['None'] - current_iter_maes['LQH']) / current_iter_maes['None']
 
             if improvement > best_snapshot["max_diff"]:
                 best_snapshot["max_diff"] = improvement
@@ -322,7 +322,7 @@ for gs in group_sizes:
                 best_snapshot["transformed_W"] = current_iter_transformed_W
 
         # --- 第五步：输出并记录该场景下的“全员成绩单” ---
-        print(f"  [发现极限场景] SQH 相比 None 提升百分比: {best_snapshot['max_diff']:.4f}")
+        print(f"  [发现极限场景] LQH 相比 None 提升百分比: {best_snapshot['max_diff']:.4f}")
         print("  === 本次极限场景全员成绩单 (MAE 10^-2) ===")
         # 遍历打印所有方法在该次“极限时刻”的误差，使用占位符对齐排版
         for method in transform_methods:
@@ -350,7 +350,7 @@ for gs in group_sizes:
                 "仿射变换": method,
                 "当前时刻误差 (10^-2)": round(final_mae, 4),
                 "相比None的优化绝对值": round(best_snapshot["all_methods_mae"]['None'] - final_mae, 4),
-                "是否为该场景最优(SQH)": "Yes" if method == "SQH" else "No"
+                "是否为该场景最优(LQH)": "Yes" if method == "LQH" else "No"
             })
 
         # 单独保存一次原始权重
@@ -399,7 +399,7 @@ for gs in group_sizes:
                         X_g, W_g = X[g_start:g_end, :], W[g_start:g_end, :]
 
                         # 变换
-                        if method in ['WUSH', 'WUS', 'SQ', 'SQH']:
+                        if method in ['WUSH', 'WUS', 'LQ', 'LQH']:
                             tx_g, T_g = transformer.transform(X_g, method=method, W=W_g)
                         else:
                             tx_g, T_g = transformer.transform(X_g, method=method)

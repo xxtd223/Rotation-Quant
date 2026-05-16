@@ -318,7 +318,7 @@ function buildT(X_g, W_g, gs, N, M, method) {
     return { T, T_inv }
   }
 
-  if (method === 'SQ') {
+  if (method === 'LQ') {
     // Cx = X@X^T + eps,  Cw = W@W^T + eps
     // Lx, Vx = eigh(Cx);  Lx = max(Lx, 1e-9)
     // Cx_sqrt    = Vx @ diag(sqrt(Lx)) @ Vx^T
@@ -352,8 +352,8 @@ function buildT(X_g, W_g, gs, N, M, method) {
     return { T, T_inv }
   }
 
-  if (method === 'SQH') {
-    // Same as SQ but T = H @ diag(Lm^{1/2}) @ Q^T
+  if (method === 'LQH') {
+    // Same as LQ but T = H @ diag(Lm^{1/2}) @ Q^T
     const Cx = xxT(X_g, gs, N)
     const Cw = xxT(W_g, gs, M)
 
@@ -435,6 +435,6 @@ export const METHOD_OPTIONS = [
   { value: 'White',              label: 'Whitening' },
   { value: 'WUS',                label: 'WUS' },
   { value: 'WUSH',               label: 'WUSH' },
-  { value: 'SQ',                 label: 'SQ' },
-  { value: 'SQH',                label: 'SQH' },
+  { value: 'LQ',                 label: 'LQ' },
+  { value: 'LQH',                label: 'LQH' },
 ]

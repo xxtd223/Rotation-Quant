@@ -43,8 +43,8 @@ const inferenceCards = [
 ]
 
 const pplData = {
-  'Llama-3.2-3B': { fp16: 8.21, mxfp4_none: 9.47, mxfp4_lqh: 8.53 },
-  'Qwen3-8B':     { fp16: 7.84, mxfp4_none: 9.12, mxfp4_lqh: 8.01 },
+  'Llama-3.2-3B': { fp16: 11.4, mxfp4_none: 14.44, mxfp4_lqh: 12.75, nvfp4_none: 12.94, nvfp4_sqh: 11.81 },
+  'Qwen3-8B':     { fp16: 10.25, mxfp4_none: 11.81, mxfp4_lqh: 10.94, nvfp4_none: 10.94, nvfp4_sqh: 10.44 },
 }
 </script>
 
@@ -97,6 +97,18 @@ const pplData = {
           <div class="ppl-label">MXFP4 + LQH</div>
           <div class="ppl-value good">{{ pplData[activeModel].mxfp4_lqh }}</div>
           <div class="ppl-delta good">+{{ (pplData[activeModel].mxfp4_lqh - pplData[activeModel].fp16).toFixed(2) }}</div>
+        </div>
+        <div class="ppl-group-sep">|</div>
+        <div class="ppl-card">
+          <div class="ppl-label">NVFP4 + None</div>
+          <div class="ppl-value bad">{{ pplData[activeModel].nvfp4_none }}</div>
+          <div class="ppl-delta">+{{ (pplData[activeModel].nvfp4_none - pplData[activeModel].fp16).toFixed(2) }}</div>
+        </div>
+        <div class="ppl-arrow">vs</div>
+        <div class="ppl-card">
+          <div class="ppl-label">NVFP4 + LQH</div>
+          <div class="ppl-value good">{{ pplData[activeModel].nvfp4_sqh }}</div>
+          <div class="ppl-delta good">+{{ (pplData[activeModel].nvfp4_sqh - pplData[activeModel].fp16).toFixed(2) }}</div>
         </div>
       </div>
     </div>
@@ -174,6 +186,7 @@ const pplData = {
 .ppl-delta { font-size: 12px; margin-top: 4px; color: #ff6b6b; }
 .ppl-delta.good { color: var(--accent-green); }
 .ppl-arrow { font-size: 20px; color: var(--text-muted); }
+.ppl-group-sep { font-size: 24px; color: var(--border-color); padding: 0 4px; }
 
 .inference-section { }
 .inference-grid {

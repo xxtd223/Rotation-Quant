@@ -8,7 +8,7 @@ const props = defineProps({ visible: Boolean })
 
 const distKey   = ref('one_extreme')
 const methodMid = ref('hadamard')
-const methodRight = ref('SQH')
+const methodRight = ref('LQH')
 const seed = ref(0)
 
 const SIZE = 1024
@@ -106,7 +106,7 @@ onMounted(regenerate)
       </div>
       <div class="insight-card">
         <span class="insight-icon">🎯</span>
-        <span>SQH combines symmetric joint optimization with Hadamard for best quantization alignment.</span>
+        <span>LQH combines symmetric joint optimization with Hadamard for best quantization alignment.</span>
       </div>
     </div>
   </div>

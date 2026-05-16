@@ -156,9 +156,9 @@ class LinearTransformer:
             S_inv_sqrt = np.diag(S ** (-0.5))
             T = S_inv_sqrt @ U.T @ W_prime_L.T
 
-        elif method == 'SQ':
+        elif method == 'LQ':
             if W is None:
-                raise ValueError("方法 'SQ' 要求提供权重矩阵 W")
+                raise ValueError("方法 'LQ' 要求提供权重矩阵 W")
 
             # 1. 计算协方差矩阵
             # 增加 eps 保证数值稳定性，防止矩阵奇异
@@ -190,9 +190,9 @@ class LinearTransformer:
             S_pow = np.diag(Lm ** (0.5))
             T = S_pow @ Q.T
 
-        elif method == 'SQH':
+        elif method == 'LQH':
             if W is None:
-                raise ValueError("方法 'SQH' 要求提供权重矩阵 W")
+                raise ValueError("方法 'LQH' 要求提供权重矩阵 W")
 
             eps_mat = 1e-6 * np.eye(m)
             Cx = X @ X.T + eps_mat

@@ -87,7 +87,7 @@ function matMulAtB(A, D, M, B, N) {
 // Full nvfp4_quant_error matching Python's nvfp4_quant_error(W, X, T, T_inv)
 // W: D×M, X: D×N, X_prime = T@X (D×N), W_prime = T_inv^T @ W (D×M)
 // Error = W'_q^T @ X'_q  -  W^T @ X   (shape M×N)
-export function nvfp4QuantError(W_flat, D, M, X_flat, N, X_prime_flat, W_prime_flat) {
+export function nvfp4QuantError(W_flat, D, M, X_flat, N, X_prime_flat, W_prime_flat, scale = 1.0) {
   // Y_exact = W^T @ X  (M×N)
   const Y_exact = matMulAtB(W_flat, D, M, X_flat, N)
 
@@ -98,11 +98,11 @@ export function nvfp4QuantError(W_flat, D, M, X_flat, N, X_prime_flat, W_prime_f
   // Y_approx = W'_q^T @ X'_q  (M×N)
   const Y_approx = matMulAtB(W_prime_q, D, M, X_prime_q, N)
 
-  // Absolute error matrix and MAE
+  // Absolute error matrix and MAE, optionally scaled
   const error = new Float32Array(M * N)
   let mae = 0
   for (let i = 0; i < M * N; i++) {
-    error[i] = Math.abs(Y_approx[i] - Y_exact[i]) * 0.7
+    error[i] = Math.abs(Y_approx[i] - Y_exact[i]) * scale
     mae += error[i]
   }
   mae /= M * N

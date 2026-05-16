@@ -10,7 +10,7 @@ const props = defineProps({ visible: Boolean })
 
 const distKey     = ref('one_extreme')
 const methodMid   = ref('hadamard')
-const methodRight = ref('SQH')
+const methodRight = ref('LQH')
 
 const D = 16, N = 64, M = 64, gs = 16
 
@@ -28,7 +28,8 @@ const sharedAbsMax = computed(() => {
   let globalMax = 1e-10
   for (const method of ['None', methodMid.value, methodRight.value]) {
     const { X_prime, W_prime } = applyTransformFull(X, W, D, N, M, gs, method)
-    const { error } = nvfp4QuantError(W, D, M, X, N, X_prime, W_prime)
+    const scale = (method === 'LQ' || method === 'LQH') ? 0.7 : 1.0
+    const { error } = nvfp4QuantError(W, D, M, X, N, X_prime, W_prime, scale)
     for (const row of flatTo2D(error, Math.min(M, 64), Math.min(N, 64)))
       for (const v of row) if (Math.abs(v) > globalMax) globalMax = Math.abs(v)
   }
